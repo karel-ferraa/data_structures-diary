@@ -9,13 +9,13 @@ typedef struct s_cell {
 } cell;
 
 typedef struct s_list {
-    cell* head;
-    int maxLevel=5;
+    cell** head;
+    int maxLevel;
 } list;
 
 list* createList(int maxlevel);
 
-void addElement(list* l, int val);
+void insertElement(list* l, int val);
 
 void displayLevelledList(list* l);
 
