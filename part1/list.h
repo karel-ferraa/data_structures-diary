@@ -16,4 +16,8 @@ void addElement(list* l, int val);
 
 void displayLevelledList(list* l);
 
+void freeList(list* l);
+
+void sortList(list* l);
+
 #endif
