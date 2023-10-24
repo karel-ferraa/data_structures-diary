@@ -10,4 +10,10 @@ typedef struct s_list {
     cell* head;
 } list;
 
+list* createList();
+
+void addElement(list* l, int val);
+
+void displayLevelledList(list* l);
+
 #endif
