@@ -54,8 +54,8 @@ void insertAtPos(list* l,int val,int index){
 void displayLevelledList(list* l){
     cell* n = l->head[0];
     while (n->next[0] != NULL){
-        printf("%d-->", n->val);
+        printf("[ %d ]-->", n->val);
         n = n->next[0];
     }
-    printf("%d\n", n->val);
+    printf("[ %d ]\n", n->val);
 }
