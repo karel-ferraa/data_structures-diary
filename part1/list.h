@@ -17,6 +17,8 @@ list* createList(int maxlevel);
 
 void insertElement(list* l, int val);
 
+void insertAtPos(list* l, int val);
+
 void displayLevelledList(list* l);
 
 void freeList(list* l);
