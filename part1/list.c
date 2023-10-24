@@ -32,6 +32,25 @@ void insertElement(list* l, int val){
     l->head[0] = new;
 }
 
+void insertAtPos(list* l,int val,int index){
+    if (index == 0){
+        insertElement(l, val);
+        return;
+    }
+    cell*n = l->head;
+    cell* prev = NULL;
+    for(int i = 0; i < index; i++){
+        prev = n;
+        n = n->next[0];
+    }
+    cell* new = malloc(sizeof(cell));
+    new->val = val;
+    new->level = 1;
+    new->next = malloc(sizeof(cell*) * (l->maxLevel));
+    new->next[0] = n;
+    prev->next[0] = new;
+}
+
 void displayLevelledList(list* l){
     cell* n = l->head[0];
     while (n->next[0] != NULL){
