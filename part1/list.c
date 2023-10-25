@@ -65,7 +65,7 @@ int getElementIndex(list l,int val){
             n = n->next[current_level];
         }
     } while((n->val > val || n->next[current_level] != NULL) && current_level > 0);
-    return i;
+    return -1;
 }
 
 // Create a new list
@@ -177,29 +177,55 @@ void displayLevelledList(list* l){
 	    printf("Empty list\n");
 	    return;
     }
-    cell* n = l->head[0];
-    while (n->next[0] != NULL){
-        printf("[ %d ]-->", n->val);
-        n = n->next[0];
+    cell* n ;
+    for (int i=0;i<l->maxLevel;i++){
+        if (l->head[i] == NULL){
+            printf("NULL\n");
+            continue;
+        }
+        n = l->head[i];
+        for (int j = 1; j < i; j++){
+            printf("------------------------");
+        }
+        if (i > 0){
+            printf("----------->");
+        }
+        while (n->next[i] != NULL){
+            printf("[ %05d ]-", n->val);
+            for (int j = 0; j < i; j++){
+                printf("------------");
+            }
+            printf("->");
+            n = n->next[i];
+        }
+        printf("[ %05d ]\n", n->val);
     }
-    printf("[ %d ]\n", n->val);
 }
 
 
 void balanceList(list* l){
-	int i, j, k;
-	cell *node, *next_node;
+	int i, j;
+	cell *node, *prev;
 	for (i=1; i<l->maxLevel; i++) {
-		node = l->head[i];
-		for (j=0; j<listLength(*l)/pow(2,i); j++) {
-			next_node = node;
-			for (k = 0; k<pow(2,i); k++) {
-				next_node = next_node->next[0];
-			}
-			node->next[i] = next_node;
-			node = node->next[i];
-		}
-		
-		// jump pow(2, i) nodes, then link the node to the next we are going to jump to.
+        // for each level, starting from the second one
+        //Get the 2**n node of the list
+        node = l->head[0];
+        for (j=1; j<pow(2,i); j++) {
+            node = node->next[0];
+            if (node == NULL) {
+                break;
+            }
+        }
+        l->head[i] = node;
+        while (node != NULL) {
+            prev=node;
+            for (j=0; j<pow(2,i); j++) {
+                node = node->next[0];
+                if (node == NULL) {
+                    break;
+                }
+            }
+            prev->next[i] = node;
+        }
 	}
 }

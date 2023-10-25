@@ -2,7 +2,7 @@
 
 int main(){
 	list* my_list;
-	my_list = createList(1);
+	my_list = createList(3);
 	displayLevelledList(my_list);
 	
 	insertElement(my_list, 18);
@@ -16,5 +16,6 @@ int main(){
 	sortList(my_list);
 	balanceList(my_list);
 	displayLevelledList(my_list);
+	printf("Index of 25: %d\n", getElementIndex(*my_list, 25));
 	return 0;
 }
