@@ -27,7 +27,18 @@ void freeList(list* l);
 
 void sortList(list* l);
 
-void balanceList(list* l);
+int isEmpty(list l);
 
+int listLength(list l);
+
+void removeElement(list* l, int val);
+
+void removeAtPos(list* l, int index);
+
+int getElementIndex(list l, int val);
+
+cell* getElement(list* l, int val);
+
+void balanceList(list* l);
 
 #endif

@@ -1,13 +1,75 @@
 #include "list.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
-int isEmpty(list* l){
-    return l->head[0] == NULL;
+int isEmpty(list l){
+    return l.head[0] == NULL;
+}
+
+int listLength(list l){
+    int i=0;
+    cell* n =l.head[0];
+    while (n != NULL){
+        n=n->next[0];
+        i++;
+    }
+    return i;
+}
+
+void removeElement(list* l, int val){
+    int index = getElementIndex(*l, val);
+    if (index == -1){
+        return;
+    }
+    removeAtPos(l, index);
+}
+
+void removeAtPos(list* l, int index){
+    if (index == 0){
+        cell* to_free = l->head[0];
+        l->head[0] = l->head[0]->next[0];
+        free(to_free);
+        return;
+    }
+    cell* n = l->head[0];
+    cell* prev = NULL;
+    for(int i = 0; i < index; i++){
+        prev = n;
+        n = n->next[0];
+    }
+    prev->next[0] = n->next[0];
+    free(n);
+}
+
+int getElementIndex(list l,int val){
+    if (isEmpty(l)) {
+        return -1;
+    }
+    int current_level = l.maxLevel-1;
+    int i = 0;
+    cell* n = l.head[current_level];
+    do
+    {
+        if (n->val == val){
+            i+=pow(2, current_level);
+            return i;
+        }
+        else if (n->val > val){
+            current_level--;
+            n = l.head[current_level];
+        }
+        else{
+            i+=pow(2, current_level);
+            current_level--;
+            n = n->next[current_level];
+        }
+    } while((n->val > val || n->next[current_level] != NULL) && current_level > 0);
+    return i;
 }
 
 // Create a new list
-list *createList(int maxlevel) {
+list* createList(int maxlevel) {
     list *l = malloc(sizeof(list));
     l->head = malloc(sizeof(cell*)*maxlevel);
     for (int i = 0; i < maxlevel; i++)
@@ -44,7 +106,7 @@ void insertElement(list* l, int val){
 
 // Add a new element to the list in a sorted way
 void sortedInsert(list* l,int val){
-    if (isEmpty(l)) {
+    if (isEmpty(*l)) {
         insertElement(l, val);
         return;
     }
@@ -92,7 +154,7 @@ void insertAtPos(list* l,int val,int index){
 }
 
 void sortList(list* l){
-    if (isEmpty(l)) {
+    if (isEmpty(*l)) {
         return;
     }
     cell* n = l->head[0];
@@ -111,7 +173,7 @@ void sortList(list* l){
 }
 
 void displayLevelledList(list* l){
-    if (isEmpty(l)) {
+    if (isEmpty(*l)) {
 	    printf("Empty list\n");
 	    return;
     }

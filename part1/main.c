@@ -14,6 +14,7 @@ int main(){
 	insertElement(my_list, 56);
 	displayLevelledList(my_list);
 	sortList(my_list);
+	balanceList(my_list);
 	displayLevelledList(my_list);
 	return 0;
 }
