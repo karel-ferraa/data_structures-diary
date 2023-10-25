@@ -29,7 +29,5 @@ void sortList(list* l);
 
 void balanceList(list* l);
 
-void sortList(list* l);
-
 
 #endif

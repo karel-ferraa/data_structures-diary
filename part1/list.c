@@ -49,12 +49,26 @@ void sortedInsert(list* l,int val){
         return;
     }
     cell* n = l->head[0];
-    int i = 0;
-    while (n->val < val && n->next[0] != NULL){
+    cell* prev = NULL;
+    while (n->val < val){
+        prev=n;
         n = n->next[0];
-        i++;
+        if (n == NULL){
+            break;
+        }
     }
-    insertAtPos(l, val, i);
+    if (prev==NULL){
+        insertElement(l, val);
+        return;
+    }
+    else{
+        cell* new = malloc(sizeof(cell));
+        new->val = val;
+        new->level = 1;
+        new->next = malloc(sizeof(cell*) * (l->maxLevel));
+        new->next[0] = n;
+        prev->next[0] = new;
+    }
 }
 
 // Add a new element to the list at a given position
@@ -77,6 +91,10 @@ void insertAtPos(list* l,int val,int index){
     prev->next[0] = new;
 }
 
+void sortList(list* l){
+
+}
+
 void displayLevelledList(list* l){
     if (isEmpty(l)) {
 	    printf("Empty list\n");
@@ -88,4 +106,9 @@ void displayLevelledList(list* l){
         n = n->next[0];
     }
     printf("[ %d ]\n", n->val);
+}
+
+
+void balanceList(list* l){
+
 }
