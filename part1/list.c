@@ -5,7 +5,12 @@
 // Create a new list
 list *createList(int maxlevel) {
     list *l = malloc(sizeof(list));
-    l->head = NULL;
+    l->head = malloc(sizeof(cell*)*maxlevel);
+    for (int i = 0; i < maxlevel; i++)
+    {
+        l->head[i] = NULL;
+    }
+    
     l->maxLevel = maxlevel;
     return l;
 }
@@ -54,7 +59,7 @@ void insertAtPos(list* l,int val,int index){
 
 void displayLevelledList(list* l){
     if (l->head[0] == NULL) {
-	    printf("empty list");
+	    printf("Empty list\n");
 	    return;
     }
     cell* n = l->head[0];
