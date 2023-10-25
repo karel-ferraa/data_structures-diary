@@ -12,9 +12,8 @@ list *createList(int maxlevel) {
 
 // Free a list
 void freeList(list *l) {
-    cell *n = l->head;
+    cell *n = l->head[0];
     cell *to_free = NULL;
-    int br = 0;
     while (n->next[0] != NULL){
         to_free = n;
         n = n->next[0];
@@ -29,7 +28,8 @@ void insertElement(list* l, int val){
     cell* new = malloc(sizeof(cell));
     new->val = val;
     new->level = 1;
-    new->next = l->head[0];
+    new->next = malloc(sizeof(cell*)*l->maxLevel);
+    new->next[0] = l->head[0];
     l->head[0] = new;
 }
 
@@ -38,7 +38,7 @@ void insertAtPos(list* l,int val,int index){
         insertElement(l, val);
         return;
     }
-    cell*n = l->head;
+    cell*n = l->head[0];
     cell* prev = NULL;
     for(int i = 0; i < index; i++){
         prev = n;
@@ -53,6 +53,10 @@ void insertAtPos(list* l,int val,int index){
 }
 
 void displayLevelledList(list* l){
+    if (l->head[0] == NULL) {
+	    printf("empty list");
+	    return;
+    }
     cell* n = l->head[0];
     while (n->next[0] != NULL){
         printf("[ %d ]-->", n->val);

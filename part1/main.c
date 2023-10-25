@@ -1,18 +1,20 @@
+#include "list.h"
+
 int main(){
-	s_list list;
-	list = createList(1);
-	displayLevelledList(list);
-
-	insertElement(list, 18);
-	insertElement(list, 25);
-	insertElement(list, 31);
-	insertElement(list, 32);
-	insertElement(list, 56);
-	insertElement(list, 59);
-	insertElement(list, 59);
-	insertElement(list, 91);
-
-	displayLevelledList(list);
+	list* my_list;
+	my_list = createList(1);
+	displayLevelledList(my_list);
+//
+//	insertElement(my_list, 18);
+//	insertElement(my_list, 25);
+//	insertElement(my_list, 31);
+//	insertElement(my_list, 32);
+//	insertElement(my_list, 56);
+//	insertElement(my_list, 59);
+//	insertElement(my_list, 59);
+//	insertElement(my_list, 91);
+//
+//	displayLevelledList(my_list);
 
 	return 0;
 }
