@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+int isEmpty(list* l){
+    return l->head[0] == NULL;
+}
+
 // Create a new list
 list *createList(int maxlevel) {
     list *l = malloc(sizeof(list));
@@ -38,6 +42,22 @@ void insertElement(list* l, int val){
     l->head[0] = new;
 }
 
+// Add a new element to the list in a sorted way
+void sortedInsert(list* l,int val){
+    if (isEmpty(l)) {
+        insertElement(l, val);
+        return;
+    }
+    cell* n = l->head[0];
+    int i = 0;
+    while (n->val < val && n->next[0] != NULL){
+        n = n->next[0];
+        i++;
+    }
+    insertAtPos(l, val, i);
+}
+
+// Add a new element to the list at a given position
 void insertAtPos(list* l,int val,int index){
     if (index == 0){
         insertElement(l, val);
@@ -58,7 +78,7 @@ void insertAtPos(list* l,int val,int index){
 }
 
 void displayLevelledList(list* l){
-    if (l->head[0] == NULL) {
+    if (isEmpty(l)) {
 	    printf("Empty list\n");
 	    return;
     }
