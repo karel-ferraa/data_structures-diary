@@ -187,5 +187,19 @@ void displayLevelledList(list* l){
 
 
 void balanceList(list* l){
-
+	int i, j, k;
+	cell *node, *next_node;
+	for (i=1; i<l->maxLevel; i++) {
+		node = l->head[i];
+		for (j=0; j<listLength(*l)/pow(2,i); j++) {
+			next_node = node;
+			for (k = 0; k<pow(2,i); k++) {
+				next_node = next_node->next[0];
+			}
+			node->next[i] = next_node;
+			node = node->next[i];
+		}
+		
+		// jump pow(2, i) nodes, then link the node to the next we are going to jump to.
+	}
 }
