@@ -47,25 +47,58 @@ int getElementIndex(list l,int val){
         return -1;
     }
     int current_level = l.maxLevel-1;
-    int i = 0;
+    int i = -1;
+    while (l.head[current_level] == NULL){
+        current_level--;
+    }
     cell* n = l.head[current_level];
-    do
-    {
-        if (n->val == val){
-            i+=pow(2, current_level);
-            return i;
-        }
-        else if (n->val > val){
-            current_level--;
-            n = l.head[current_level];
+    int isInHead = 1;
+    int to_compare = n->val;
+    while (current_level >= 0){
+        if (isInHead){
+            if (to_compare == val){
+                return i+pow(2, current_level);
+            }
+            else if (to_compare < val){
+                i+=pow(2, current_level);
+                n = l.head[current_level];
+                current_level--;
+                isInHead = 0;
+                if (current_level < 0){
+                    return -1;
+                }
+                to_compare = n->next[current_level]->val;
+            }
+            else{
+                current_level--;
+                if (current_level < 0){
+                    return -1;
+                }
+                n = l.head[current_level];
+                to_compare = n->val;
+            }
         }
         else{
-            i+=pow(2, current_level);
-            current_level--;
-            n = n->next[current_level];
+            if (to_compare == val){
+                return i+pow(2, current_level);
+            }
+            else if (to_compare < val){
+                i+=pow(2, current_level);
+                n = n->next[current_level];
+                current_level--;
+                isInHead = 0;
+                if (current_level < 0){
+                    return -1;
+                }
+                to_compare = n->next[current_level]->val;
+            }
+            else{
+                current_level--;
+                to_compare = n->next[current_level]->val;
+            }
         }
-    } while((n->val > val || n->next[current_level] != NULL) && current_level > 0);
-    return -1;
+    }
+    return i;
 }
 
 // Create a new list
@@ -184,15 +217,15 @@ void displayLevelledList(list* l){
             continue;
         }
         n = l->head[i];
-        for (int j = 1; j < i; j++){
-            printf("------------------------");
+        for (int j = 1; j < pow(2,i)-1; j++){
+            printf("------------");
         }
         if (i > 0){
             printf("----------->");
         }
         while (n->next[i] != NULL){
             printf("[ %05d ]-", n->val);
-            for (int j = 0; j < i; j++){
+            for (int j = 1; j < pow(2,i); j++){
                 printf("------------");
             }
             printf("->");
