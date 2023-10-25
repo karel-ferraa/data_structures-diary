@@ -93,7 +93,6 @@ void insertAtPos(list* l,int val,int index){
 
 void sortList(list* l){
     if (isEmpty(l)) {
-        printf("Empty list\n");
         return;
     }
     cell* n = l->head[0];
