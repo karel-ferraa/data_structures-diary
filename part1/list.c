@@ -92,7 +92,23 @@ void insertAtPos(list* l,int val,int index){
 }
 
 void sortList(list* l){
-
+    if (isEmpty(l)) {
+        printf("Empty list\n");
+        return;
+    }
+    cell* n = l->head[0];
+    cell* prev = NULL;
+    while (n->next[0] != NULL){
+        prev = n;
+        n = n->next[0];
+        if (prev->val > n->val){
+            int tmp = prev->val;
+            prev->val = n->val;
+            n->val = tmp;
+            n = l->head[0];
+            prev = NULL;
+        }
+    }
 }
 
 void displayLevelledList(list* l){
