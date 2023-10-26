@@ -25,5 +25,7 @@ int main(){
 	printf("Index of 59: %d\n", getElementIndex(*my_list, 59));
 	printf("Index of 91: %d\n", getElementIndex(*my_list, 91));
 	printf("Index of 12: %d\n", getElementIndex(*my_list, 12));
+	removeElement(my_list, 32);
+	displayLevelledList(my_list);
 	return 0;
 }

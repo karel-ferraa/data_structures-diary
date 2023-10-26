@@ -32,14 +32,23 @@ void removeAtPos(list* l, int index){
         free(to_free);
         return;
     }
-    cell* n = l->head[0];
-    cell* prev = NULL;
-    for(int i = 0; i < index; i++){
-        prev = n;
-        n = n->next[0];
+    for (int i = 0; i < l->maxLevel; i++){
+        int power = pow(2,i);
+        if (index % power != 0){
+            break;
+        }
+        if (l->head[i] == NULL){
+            continue;
+        }
+        cell* n = l->head[i];
+        cell* prev = NULL;
+        for(int j = 0; j < (index/power)+1; j++){
+            prev = n;
+            n = n->next[i];
+        }
+        prev->next[i] = n->next[i];
+        free(n);
     }
-    prev->next[0] = n->next[0];
-    free(n);
 }
 
 int getElementIndex(list l,int val){
