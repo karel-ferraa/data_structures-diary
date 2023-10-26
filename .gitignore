@@ -1,2 +1,4 @@
 *.exe
 .vscode
+part1/.idea
+part1/cmake-build-debug
