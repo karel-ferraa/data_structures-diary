@@ -1,5 +1,4 @@
 ```bash
-cd part1
-gcc main.c list.c list.h -o ./output/a.exe -lm
-./output/a.exe
+gcc part1/*.h part1/*.c -o ./part1/output/a.exe -lm
+./part1/output/a.exe
 ```
