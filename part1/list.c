@@ -142,6 +142,9 @@ void insertElement(list* l, int val){
     new->val = val;
     new->level = 1;
     new->next = malloc(sizeof(cell*)*l->maxLevel);
+    for (int i = 0; i < l->maxLevel; i++){
+        new->next[i] = NULL;
+    }
     new->next[0] = l->head[0];
     l->head[0] = new;
 }
@@ -170,6 +173,9 @@ void sortedInsert(list* l,int val){
         new->val = val;
         new->level = 1;
         new->next = malloc(sizeof(cell*) * (l->maxLevel));
+        for (int i = 0; i < l->maxLevel; i++){
+            new->next[i] = NULL;
+        }
         new->next[0] = n;
         prev->next[0] = new;
     }
@@ -191,6 +197,9 @@ void insertAtPos(list* l,int val,int index){
     new->val = val;
     new->level = 1;
     new->next = malloc(sizeof(cell*) * (l->maxLevel));
+    for (int i = 0; i < l->maxLevel; i++){
+        new->next[i] = NULL;
+    }
     new->next[0] = n;
     prev->next[0] = new;
 }
