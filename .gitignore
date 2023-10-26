@@ -2,3 +2,4 @@
 .vscode
 part1/.idea
 part1/cmake-build-debug
+part1/CMakeLists.txt

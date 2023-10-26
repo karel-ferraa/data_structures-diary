@@ -3,4 +3,4 @@ project(part1 C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(part1 main.c list.c list.h)
+add_executable(part1 main.c list.c list.h )
