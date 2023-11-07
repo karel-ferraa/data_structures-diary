@@ -3,13 +3,17 @@
 #include <stdio.h>
 #include <math.h>
 
-int isEmpty(list l){
+/*
+    Levelled list
+*/
+
+int isLevelListEmpty(level_list l){
     return l.head[0] == NULL;
 }
 
-int listLength(list l){
+int levelListLength(level_list l){
     int i=0;
-    cell* n =l.head[0];
+    level_cell* n =l.head[0];
     while (n != NULL){
         n=n->next[0];
         i++;
@@ -17,17 +21,17 @@ int listLength(list l){
     return i;
 }
 
-void removeElement(list* l, int val){
-    int index = getElementIndex(*l, val);
+void removeElementLevelList(level_list* l, int val){
+    int index = getElementIndexLevelList(*l, val);
     if (index == -1){
         return;
     }
-    removeAtPos(l, index);
+    removeAtPosLevelList(l, index);
 }
 
-void removeAtPos(list* l, int index){
+void removeAtPosLevelList(level_list* l, int index){
     if (index == 0){
-        cell* to_free = l->head[0];
+        level_cell* to_free = l->head[0];
         l->head[0] = l->head[0]->next[0];
         free(to_free);
         return;
@@ -40,8 +44,8 @@ void removeAtPos(list* l, int index){
         if (l->head[i] == NULL){
             continue;
         }
-        cell* n = l->head[i];
-        cell* prev = NULL;
+        level_cell* n = l->head[i];
+        level_cell* prev = NULL;
         for(int j = 0; j < (index/power)+1; j++){
             prev = n;
             n = n->next[i];
@@ -51,8 +55,8 @@ void removeAtPos(list* l, int index){
     }
 }
 
-int getElementIndex(list l,int val){
-    if (isEmpty(l)) {
+int getElementIndexLevelList(level_list l,int val){
+    if (isLevelListEmpty(l)) {
         return -1;
     }
     int current_level = l.maxLevel-1;
@@ -60,7 +64,7 @@ int getElementIndex(list l,int val){
     while (l.head[current_level] == NULL){
         current_level--;
     }
-    cell* n = l.head[current_level];
+    level_cell* n = l.head[current_level];
     int isInHead = 1;
     int to_compare = n->val;
     while (current_level >= 0){
@@ -110,10 +114,10 @@ int getElementIndex(list l,int val){
     return i;
 }
 
-// Create a new list
-list* createList(int maxlevel) {
-    list *l = malloc(sizeof(list));
-    l->head = malloc(sizeof(cell*)*maxlevel);
+// Create a new level_list
+level_list* createLevelList(int maxlevel) {
+    level_list *l = malloc(sizeof(level_list));
+    l->head = malloc(sizeof(level_cell*)*maxlevel);
     for (int i = 0; i < maxlevel; i++)
     {
         l->head[i] = NULL;
@@ -123,10 +127,10 @@ list* createList(int maxlevel) {
     return l;
 }
 
-// Free a list
-void freeList(list *l) {
-    cell *n = l->head[0];
-    cell *to_free = NULL;
+// Free a level_list
+void freeLevelList(level_list *l) {
+    level_cell *n = l->head[0];
+    level_cell *to_free = NULL;
     while (n->next[0] != NULL){
         to_free = n;
         n = n->next[0];
@@ -136,12 +140,12 @@ void freeList(list *l) {
     free(l);
 }
 
-// Add a new element to the list
-void insertElement(list* l, int val){
-    cell* new = malloc(sizeof(cell));
+// Add a new element to the level_list
+void insertElementLevelList(level_list* l, int val){
+    level_cell* new = malloc(sizeof(level_cell));
     new->val = val;
     new->level = 1;
-    new->next = malloc(sizeof(cell*)*l->maxLevel);
+    new->next = malloc(sizeof(level_cell*)*l->maxLevel);
     for (int i = 0; i < l->maxLevel; i++){
         new->next[i] = NULL;
     }
@@ -149,14 +153,14 @@ void insertElement(list* l, int val){
     l->head[0] = new;
 }
 
-// Add a new element to the list in a sorted way
-void sortedInsert(list* l,int val){
-    if (isEmpty(*l)) {
-        insertElement(l, val);
+// Add a new element to the level_list in a sorted way (assuming the list is sorted in ascending order)
+void sortedInsertLevelList(level_list* l,int val){
+    if (isLevelListEmpty(*l)) {
+        insertElementLevelList(l, val);
         return;
     }
-    cell* n = l->head[0];
-    cell* prev = NULL;
+    level_cell* n = l->head[0];
+    level_cell* prev = NULL;
     while (n->val < val){
         prev=n;
         n = n->next[0];
@@ -165,14 +169,14 @@ void sortedInsert(list* l,int val){
         }
     }
     if (prev==NULL){
-        insertElement(l, val);
+        insertElementLevelList(l, val);
         return;
     }
     else{
-        cell* new = malloc(sizeof(cell));
+        level_cell* new = malloc(sizeof(level_cell));
         new->val = val;
         new->level = 1;
-        new->next = malloc(sizeof(cell*) * (l->maxLevel));
+        new->next = malloc(sizeof(level_cell*) * (l->maxLevel));
         for (int i = 0; i < l->maxLevel; i++){
             new->next[i] = NULL;
         }
@@ -181,22 +185,22 @@ void sortedInsert(list* l,int val){
     }
 }
 
-// Add a new element to the list at a given position
-void insertAtPos(list* l,int val,int index){
+// Add a new element to the level_list at a given position
+void insertAtPosLevelList(level_list* l,int val,int index){
     if (index == 0){
-        insertElement(l, val);
+        insertElementLevelList(l, val);
         return;
     }
-    cell*n = l->head[0];
-    cell* prev = NULL;
+    level_cell*n = l->head[0];
+    level_cell* prev = NULL;
     for(int i = 0; i < index; i++){
         prev = n;
         n = n->next[0];
     }
-    cell* new = malloc(sizeof(cell));
+    level_cell* new = malloc(sizeof(level_cell));
     new->val = val;
     new->level = 1;
-    new->next = malloc(sizeof(cell*) * (l->maxLevel));
+    new->next = malloc(sizeof(level_cell*) * (l->maxLevel));
     for (int i = 0; i < l->maxLevel; i++){
         new->next[i] = NULL;
     }
@@ -204,12 +208,12 @@ void insertAtPos(list* l,int val,int index){
     prev->next[0] = new;
 }
 
-void sortList(list* l){
-    if (isEmpty(*l)) {
+void sortLevelList(level_list* l){
+    if (isLevelListEmpty(*l)) {
         return;
     }
-    cell* n = l->head[0];
-    cell* prev = NULL;
+    level_cell* n = l->head[0];
+    level_cell* prev = NULL;
     while (n->next[0] != NULL){
         prev = n;
         n = n->next[0];
@@ -223,12 +227,12 @@ void sortList(list* l){
     }
 }
 
-void displayLevelledList(list* l){
-    if (isEmpty(*l)) {
-	    printf("Empty list\n");
+void displayLevelledList(level_list* l){
+    if (isLevelListEmpty(*l)) {
+	    printf("Empty level_list\n");
 	    return;
     }
-    cell* n ;
+    level_cell* n ;
     for (int i=0;i<l->maxLevel;i++){
         if (l->head[i] == NULL){
             printf("NULL\n");
@@ -254,12 +258,12 @@ void displayLevelledList(list* l){
 }
 
 
-void balanceList(list* l){
+void balanceList(level_list* l){
 	int i, j;
-	cell *node, *prev;
+	level_cell *node, *prev;
 	for (i=1; i<l->maxLevel; i++) {
         // for each level, starting from the second one
-        //Get the 2**n node of the list
+        //Get the 2**n node of the level_list
         node = l->head[0];
         for (j=1; j<pow(2,i); j++) {
             node = node->next[0];
@@ -280,3 +284,88 @@ void balanceList(list* l){
         }
 	}
 }
+
+
+/*
+    Simple list
+*/
+
+
+list* createList(){
+    list* l = malloc(sizeof(list));
+    l->head = NULL;
+    return l;
+};
+
+int listLength(list l){
+    int i=0;
+    cell* n =l.head;
+    while (n != NULL){
+        n=n->next;
+        i++;
+    }
+    return i;
+}
+
+int isEmpty(list l){
+    return l.head == NULL;
+}
+
+void insertElement(list* l, int val){
+    cell new = {val, NULL};
+    if (l->head == NULL){
+        l->head = &new;
+        return;
+    }
+    cell* n = l->head;
+    while (n->next != NULL){
+        n = n->next;
+    }
+    n->next = &new;
+};
+
+//We assume the list is sorted in ascending order
+void sortedInsert(list* l, int val){
+    cell new = {val, NULL};
+    if (l->head == NULL){
+        l->head = &new;
+        return;
+    }
+    cell* n = l->head;
+    cell* prev = NULL;
+    while (n->val < val){
+        prev=n;
+        n = n->next;
+        if (n == NULL){
+            break;
+        }
+    }
+    if (prev==NULL){
+        l->head = &new;
+        new.next = n;
+        return;
+    }
+    else{
+        prev->next = &new;
+        new.next = n;
+    }
+};
+
+void insertAtPos(list* l, int val,int index);
+
+void displayList(list* l);
+
+void freeList(list* l);
+
+void sortList(list* l);
+
+int isEmpty(list l);
+
+int listLength(list l);
+
+void removeElement(list* l, int val);
+
+void removeAtPos(list* l, int index);
+
+int getElementIndex(list l, int val);
+
