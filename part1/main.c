@@ -28,5 +28,6 @@ int main(){
 	removeElementLevelList(my_list, 32);
 	balanceList(my_list);
 	displayLevelledList(my_list);
+	freeLevelList(my_list);
 	return 0;
 }

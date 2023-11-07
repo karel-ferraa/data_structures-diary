@@ -351,21 +351,105 @@ void sortedInsert(list* l, int val){
     }
 };
 
-void insertAtPos(list* l, int val,int index);
+void insertAtPos(list* l, int val,int index){
+    cell new = {val, NULL};
+    if (index == 0){
+        new.next = l->head;
+        l->head = &new;
+        return;
+    }
+    cell*n = l->head;
+    cell* prev = NULL;
+    for(int i = 0; i < index; i++){
+        prev = n;
+        n = n->next;
+    }
+    prev->next = &new;
+    new.next = n;
+};
 
-void displayList(list* l);
+void displayList(list* l){
+    if (l->head == NULL){
+        printf("Empty list\n");
+        return;
+    }
+    cell* n = l->head;
+    while (n->next != NULL){
+        printf("[ %05d ]->", n->val);
+        n = n->next;
+    }
+    printf("[ %05d ]\n", n->val);
+};
 
-void freeList(list* l);
+void freeList(list* l){
+    cell* n = l->head;
+    cell* to_free = NULL;
+    while (n->next != NULL){
+        to_free = n;
+        n = n->next;
+        free(to_free);
+    }
+    free(n);
+    free(l);
+};
 
-void sortList(list* l);
+void sortList(list* l){
+    if (l->head == NULL){
+        return;
+    }
+    cell* n = l->head;
+    cell* prev = NULL;
+    while (n->next != NULL){
+        prev = n;
+        n = n->next;
+        if (prev->val > n->val){
+            int tmp = prev->val;
+            prev->val = n->val;
+            n->val = tmp;
+            n = l->head;
+            prev = NULL;
+        }
+    }
+};
 
-int isEmpty(list l);
+void removeElement(list* l, int val){
+    int index = getElementIndex(*l, val);
+    if (index == -1){
+        return;
+    }
+    removeAtPos(l, index);
+};
 
-int listLength(list l);
+void removeAtPos(list* l, int index){
+    if (index == 0){
+        cell* to_free = l->head;
+        l->head = l->head->next;
+        free(to_free);
+        return;
+    }
+    cell* n = l->head;
+    cell* prev = NULL;
+    for(int i = 0; i < index; i++){
+        prev = n;
+        n = n->next;
+    }
+    prev->next = n->next;
+    free(n);
+};
 
-void removeElement(list* l, int val);
-
-void removeAtPos(list* l, int index);
-
-int getElementIndex(list l, int val);
+int getElementIndex(list l, int val){
+    if (l.head == NULL) {
+        return -1;
+    }
+    cell* n = l.head;
+    int i = 0;
+    while (n->val != val){
+        n = n->next;
+        i++;
+        if (n == NULL){
+            return -1;
+        }
+    }
+    return i;
+};
 
