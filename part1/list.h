@@ -1,9 +1,11 @@
 #ifndef LIST_H
 #define LIST_H
 
+#include "calendar.h"
+#include "appointment.h"
 
 typedef struct l_cell {
-    int val;
+    calendarEntry* val;
     int level;
     struct l_cell** next;
 } level_cell;
@@ -15,13 +17,15 @@ typedef struct s_level_list {
 
 level_list* createLevelList(int maxlevel);
 
-void insertElementLevelList(level_list* l, int val);
+void insertElementLevelList(level_list* l, calendarEntry ce);
 
-void sortedInsertLevelList(level_list* l, int val);
+void sortedInsertLevelList(level_list* l, calendarEntry ce);
 
-void insertAtPosLevelList(level_list* l, int val,int index);
+void insertAtPosLevelList(level_list* l, calendarEntry ce,int index);
 
 void displayLevelledList(level_list* l);
+
+void freeLevelCell(level_cell* lc);
 
 void freeLevelList(level_list* l);
 
@@ -31,32 +35,30 @@ int isLevelListEmpty(level_list l);
 
 int levelListLength(level_list l);
 
-void removeElementLevelList(level_list* l, int val);
+void removeElementLevelList(level_list* l, calendarEntry ce);
 
 void removeAtPosLevelList(level_list* l, int index);
 
-int getElementIndexLevelList(level_list l, int val);
+int getElementIndexLevelList(level_list l, calendarEntry ce);
 
-void balanceList(level_list* l);
 
 
 typedef struct s_cell {
-    int val;
+    appointment val;
     struct s_cell* next;
 } cell;
 
 typedef struct s_list {
     cell* head;
-    int maxLevel;
 } list;
 
 list* createList();
 
-void insertElement(list* l, int val);
+void insertElement(list* l, appointment val);
 
-void sortedInsert(list* l, int val);
+void sortedInsert(list* l, appointment val);
 
-void insertAtPos(list* l, int val,int index);
+void insertAtPos(list* l, appointment val,int index);
 
 void displayList(list* l);
 
@@ -68,11 +70,11 @@ int isEmpty(list l);
 
 int listLength(list l);
 
-void removeElement(list* l, int val);
+void removeElement(list* l, appointment val);
 
 void removeAtPos(list* l, int index);
 
-int getElementIndex(list l, int val);
+int getElementIndex(list l, appointment val);
 
 
 

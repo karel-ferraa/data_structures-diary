@@ -1,4 +1,5 @@
 #include "list.h"
+#include "appointment.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -6,6 +7,12 @@
 /*
     Levelled list
 */
+
+void freeLevelCell(level_cell* lc){
+    freeCalendarEntry(lc->val);
+    free(lc->next);
+    free(lc);
+}
 
 int isLevelListEmpty(level_list l){
     return l.head[0] == NULL;
@@ -21,8 +28,8 @@ int levelListLength(level_list l){
     return i;
 }
 
-void removeElementLevelList(level_list* l, int val){
-    int index = getElementIndexLevelList(*l, val);
+void removeElementLevelList(level_list* l, calendarEntry ce){
+    int index = getElementIndexLevelList(*l, ce);
     if (index == -1){
         return;
     }
@@ -33,82 +40,40 @@ void removeAtPosLevelList(level_list* l, int index){
     if (index == 0){
         level_cell* to_free = l->head[0];
         l->head[0] = l->head[0]->next[0];
-        free(to_free);
+        freeLevelCell(to_free);
         return;
     }
-    for (int i = 0; i < l->maxLevel; i++){
-        int power = pow(2,i);
-        if (index % power != 0){
-            break;
-        }
-        if (l->head[i] == NULL){
-            continue;
-        }
-        level_cell* n = l->head[i];
-        level_cell* prev = NULL;
-        for(int j = 0; j < (index/power)+1; j++){
-            prev = n;
-            n = n->next[i];
-        }
-        prev->next[i] = n->next[i];
-        free(n);
+    level_cell* n = l->head[0];
+    level_cell* prev = NULL;
+    for(int i = 0; i < index; i++){
+        prev = n;
+        n = n->next[0];
     }
+    prev->next[0] = n->next[0];
+    freeLevelCell(n);
 }
 
-int getElementIndexLevelList(level_list l,int val){
+int getElementIndexLevelList(level_list l,calendarEntry ce){
     if (isLevelListEmpty(l)) {
         return -1;
     }
-    int current_level = l.maxLevel-1;
+
+    /*We will use a 4-level list
+Level constitution: the levels correspond to the successive letters in the name strings.
+At the highest level (3), chaining is performed on the first letter of the string (two cells are linked if
+the first letter of their string is different).
+At level 2, chaining is performed if the first letter of the cell strings is the same but the second letter
+is different.
+At level 1, chaining is performed if the first two letters of the cell strings are the same but the third
+letter is different.
+At level 0, we chain all the cells*/
     int i = -1;
-    while (l.head[current_level] == NULL){
-        current_level--;
-    }
-    level_cell* n = l.head[current_level];
-    int isInHead = 1;
-    int to_compare = n->val;
-    while (current_level >= 0){
-        if (isInHead){
-            if (to_compare == val){
-                return i+pow(2, current_level);
-            }
-            else if (to_compare < val){
-                i+=pow(2, current_level);
-                n = l.head[current_level];
-                current_level--;
-                isInHead = 0;
-                if (current_level < 0){
-                    return -1;
-                }
-                to_compare = n->next[current_level]->val;
-            }
-            else{
-                current_level--;
-                if (current_level < 0){
-                    return -1;
-                }
-                n = l.head[current_level];
-                to_compare = n->val;
-            }
-        }
-        else{
-            if (to_compare == val){
-                return i+pow(2, current_level);
-            }
-            else if (to_compare < val){
-                i+=pow(2, current_level);
-                n = n->next[current_level];
-                current_level--;
-                isInHead = 0;
-                if (current_level < 0){
-                    return -1;
-                }
-                to_compare = n->next[current_level]->val;
-            }
-            else{
-                current_level--;
-                to_compare = n->next[current_level]->val;
-            }
+    level_cell* n = l.head[0];
+    while (getIdentifier(*(n->val)) != getIdentifier(ce)){
+        n = n->next[0];
+        i++;
+        if (n == NULL){
+            return -1;
         }
     }
     return i;
@@ -134,16 +99,16 @@ void freeLevelList(level_list *l) {
     while (n->next[0] != NULL){
         to_free = n;
         n = n->next[0];
-        free(to_free);
+        freeLevelCell(to_free);
     }
-    free(n);
+    freeLevelCell(n);
     free(l);
 }
 
 // Add a new element to the level_list
-void insertElementLevelList(level_list* l, int val){
+void insertElementLevelList(level_list* l, calendarEntry ce){
     level_cell* new = malloc(sizeof(level_cell));
-    new->val = val;
+    new->val = &ce;
     new->level = 1;
     new->next = malloc(sizeof(level_cell*)*l->maxLevel);
     for (int i = 0; i < l->maxLevel; i++){
@@ -154,14 +119,14 @@ void insertElementLevelList(level_list* l, int val){
 }
 
 // Add a new element to the level_list in a sorted way (assuming the list is sorted in ascending order)
-void sortedInsertLevelList(level_list* l,int val){
+void sortedInsertLevelList(level_list* l, calendarEntry ce){
     if (isLevelListEmpty(*l)) {
-        insertElementLevelList(l, val);
+        insertElementLevelList(l, ce);
         return;
     }
     level_cell* n = l->head[0];
     level_cell* prev = NULL;
-    while (n->val < val){
+    while (strcmp(getIdentifier(*(n->val)), getIdentifier(ce)) < 0){
         prev=n;
         n = n->next[0];
         if (n == NULL){
@@ -169,12 +134,12 @@ void sortedInsertLevelList(level_list* l,int val){
         }
     }
     if (prev==NULL){
-        insertElementLevelList(l, val);
+        insertElementLevelList(l, ce);
         return;
     }
     else{
         level_cell* new = malloc(sizeof(level_cell));
-        new->val = val;
+        new->val = &ce;
         new->level = 1;
         new->next = malloc(sizeof(level_cell*) * (l->maxLevel));
         for (int i = 0; i < l->maxLevel; i++){
@@ -186,19 +151,20 @@ void sortedInsertLevelList(level_list* l,int val){
 }
 
 // Add a new element to the level_list at a given position
-void insertAtPosLevelList(level_list* l,int val,int index){
+
+void insertAtPosLevelList(level_list* l, calendarEntry ce,int index){
     if (index == 0){
-        insertElementLevelList(l, val);
+        insertElementLevelList(l, ce);
         return;
     }
-    level_cell*n = l->head[0];
+    level_cell* n = l->head[0];
     level_cell* prev = NULL;
     for(int i = 0; i < index; i++){
         prev = n;
         n = n->next[0];
     }
     level_cell* new = malloc(sizeof(level_cell));
-    new->val = val;
+    new->val = &ce;
     new->level = 1;
     new->next = malloc(sizeof(level_cell*) * (l->maxLevel));
     for (int i = 0; i < l->maxLevel; i++){
@@ -217,8 +183,8 @@ void sortLevelList(level_list* l){
     while (n->next[0] != NULL){
         prev = n;
         n = n->next[0];
-        if (prev->val > n->val){
-            int tmp = prev->val;
+        if (strcmp(getIdentifier(*(prev->val)), getIdentifier(*(n->val))) > 0){
+            calendarEntry* tmp = prev->val;
             prev->val = n->val;
             n->val = tmp;
             n = l->head[0];
@@ -229,60 +195,15 @@ void sortLevelList(level_list* l){
 
 void displayLevelledList(level_list* l){
     if (isLevelListEmpty(*l)) {
-	    printf("Empty level_list\n");
-	    return;
+        printf("Empty list\n");
+        return;
     }
-    level_cell* n ;
-    for (int i=0;i<l->maxLevel;i++){
-        if (l->head[i] == NULL){
-            printf("NULL\n");
-            continue;
-        }
-        n = l->head[i];
-        for (int j = 1; j < pow(2,i)-1; j++){
-            printf("------------");
-        }
-        if (i > 0){
-            printf("----------->");
-        }
-        while (n->next[i] != NULL){
-            printf("[ %05d ]-", n->val);
-            for (int j = 1; j < pow(2,i); j++){
-                printf("------------");
-            }
-            printf("->");
-            n = n->next[i];
-        }
-        printf("[ %05d ]\n", n->val);
+    level_cell* n = l->head[0];
+    while (n->next[0] != NULL){
+        printCalendarEntry(n->val);
+        n = n->next[0];
     }
-}
-
-
-void balanceList(level_list* l){
-	int i, j;
-	level_cell *node, *prev;
-	for (i=1; i<l->maxLevel; i++) {
-        // for each level, starting from the second one
-        //Get the 2**n node of the level_list
-        node = l->head[0];
-        for (j=1; j<pow(2,i); j++) {
-            node = node->next[0];
-            if (node == NULL) {
-                break;
-            }
-        }
-        l->head[i] = node;
-        while (node != NULL) {
-            prev=node;
-            for (j=0; j<pow(2,i); j++) {
-                node = node->next[0];
-                if (node == NULL) {
-                    break;
-                }
-            }
-            prev->next[i] = node;
-        }
-	}
+    printCalendarEntry(n->val);
 }
 
 
@@ -311,7 +232,7 @@ int isEmpty(list l){
     return l.head == NULL;
 }
 
-void insertElement(list* l, int val){
+void insertElement(list* l, appointment val){
     cell new = {val, NULL};
     if (l->head == NULL){
         l->head = &new;
@@ -324,8 +245,52 @@ void insertElement(list* l, int val){
     n->next = &new;
 };
 
+int appointementCmp(appointment a, appointment b){
+    if (a.year < b.year){
+        return -1;
+    }
+    else if (a.year > b.year){
+        return 1;
+    }
+    else{
+        if (a.month < b.month){
+            return -1;
+        }
+        else if (a.month > b.month){
+            return 1;
+        }
+        else{
+            if (a.day < b.day){
+                return -1;
+            }
+            else if (a.day > b.day){
+                return 1;
+            }
+            else{
+                if (a.hour < b.hour){
+                    return -1;
+                }
+                else if (a.hour > b.hour){
+                    return 1;
+                }
+                else{
+                    if (a.minute < b.minute){
+                        return -1;
+                    }
+                    else if (a.minute > b.minute){
+                        return 1;
+                    }
+                    else{
+                        return 0;
+                    }
+                }
+            }
+        }
+    }
+}
+
 //We assume the list is sorted in ascending order
-void sortedInsert(list* l, int val){
+void sortedInsert(list* l, appointment val){
     cell new = {val, NULL};
     if (l->head == NULL){
         l->head = &new;
@@ -333,16 +298,16 @@ void sortedInsert(list* l, int val){
     }
     cell* n = l->head;
     cell* prev = NULL;
-    while (n->val < val){
-        prev=n;
+    while (appointementCmp(n->val, val) < 0){
+        prev = n;
         n = n->next;
         if (n == NULL){
             break;
         }
     }
     if (prev==NULL){
+        new.next = l->head;
         l->head = &new;
-        new.next = n;
         return;
     }
     else{
@@ -351,7 +316,7 @@ void sortedInsert(list* l, int val){
     }
 };
 
-void insertAtPos(list* l, int val,int index){
+void insertAtPos(list* l, appointment val,int index){
     cell new = {val, NULL};
     if (index == 0){
         new.next = l->head;
@@ -375,11 +340,16 @@ void displayList(list* l){
     }
     cell* n = l->head;
     while (n->next != NULL){
-        printf("[ %05d ]->", n->val);
+        printAppointment(n->val);
         n = n->next;
     }
-    printf("[ %05d ]\n", n->val);
+    printAppointment(n->val);
 };
+
+void freeCell(cell* c){
+    freeAppointment(&c->val);
+    free(c);
+}
 
 void freeList(list* l){
     cell* n = l->head;
@@ -387,9 +357,9 @@ void freeList(list* l){
     while (n->next != NULL){
         to_free = n;
         n = n->next;
-        free(to_free);
+        freeCell(to_free);
     }
-    free(n);
+    freeCell(n);
     free(l);
 };
 
@@ -402,8 +372,8 @@ void sortList(list* l){
     while (n->next != NULL){
         prev = n;
         n = n->next;
-        if (prev->val > n->val){
-            int tmp = prev->val;
+        if (appointementCmp(prev->val, n->val) > 0){
+            appointment tmp = prev->val;
             prev->val = n->val;
             n->val = tmp;
             n = l->head;
@@ -412,7 +382,7 @@ void sortList(list* l){
     }
 };
 
-void removeElement(list* l, int val){
+void removeElement(list* l, appointment val){
     int index = getElementIndex(*l, val);
     if (index == -1){
         return;
@@ -424,7 +394,7 @@ void removeAtPos(list* l, int index){
     if (index == 0){
         cell* to_free = l->head;
         l->head = l->head->next;
-        free(to_free);
+        freeCell(to_free);
         return;
     }
     cell* n = l->head;
@@ -434,16 +404,16 @@ void removeAtPos(list* l, int index){
         n = n->next;
     }
     prev->next = n->next;
-    free(n);
+    freeCell(n);
 };
 
-int getElementIndex(list l, int val){
+int getElementIndex(list l, appointment val){
     if (l.head == NULL) {
         return -1;
     }
+    int i = -1;
     cell* n = l.head;
-    int i = 0;
-    while (n->val != val){
+    while (appointementCmp(n->val, val) != 0){
         n = n->next;
         i++;
         if (n == NULL){

@@ -1,13 +1,7 @@
 # Data Structures Diary
 
-## Part 1 - Functionnalities
 
-- [x] Create a new diary
-- [x] Add a new entry
-- [ ] Delete an entry
-- [x] Fast search for an entry
-
-## Part 2 - How to run
+## Part 1 - How to run
 
 1. Make sure you have the latest version of [gcc](https://gcc.gnu.org/) installed
 2. Clone the repository
