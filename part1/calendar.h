@@ -10,6 +10,7 @@ typedef struct s_calendarEntry{
     list* appointments;
 } calendarEntry;
 
+
 calendarEntry* createCalendarEntry(contact c);
 
 void addAppointment(calendarEntry* ce, appointment* a);
