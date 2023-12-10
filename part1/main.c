@@ -77,7 +77,7 @@ int menu() {
 	// 48 and 55 are ascii values for 0 and 7
 	while (choice < 48 || choice > 55) {
 		printf("Select the action to perform by typing in the corresponding number\n");
-		printf("0. Quit the program");
+		printf("0. Quit the program\n");
 		printf("1. Search for a contact\n");
 		printf("2. View a contact's appointments\n");
 		printf("3. Create a contact\n");
@@ -226,4 +226,5 @@ int main() {
 			}
 		}
 	} while (choice != '0');
+	freeLevelList(main_list);
 }
