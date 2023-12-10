@@ -7,6 +7,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdio_ext.h>
+#include <assert.h>
 
 int verifyDate(int day, int month, int year){
 	if (year < 0){
@@ -109,6 +110,7 @@ void viewContactAppointments(level_list* main_list) {
 	// right now the getElementPtr is O(n) complexity which is bad.
 	level_cell* contact_cell = getElementPtrLevelList(*main_list, *ce_to_search);
 	if (contact_cell != NULL) {
+		assert(contact_cell->val->appointments != NULL);
 		cell* curr_cell = contact_cell->val->appointments->head;
 		while (curr_cell != NULL) {
 			printAppointment(curr_cell->val);
@@ -131,7 +133,7 @@ void addNewContact(level_list* main_list) {
 	contact* new_contact = createContact(surname, firstName);
 	// fgets adds a \n at the end of the buffer, which makes the verifyContact fail. We could use scanf instead of fgets, but that means we are assuming that people's names don't contain spaces in them which is bad. Actually, [you shouldn't assume anything about people's names](https://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/)
 	//if (verifyContact(*new_contact) != 1) {
-	//printf("Error: Contact surname and Firstname must be contain only alphabetic characters and be non-empty, aborting\n");
+	//printf("Error: Contact surname and Firstname must contain only alphabetic characters and be non-empty, aborting\n");
 	//} else {
 	calendarEntry* new_calendar_entry = createCalendarEntry(*new_contact);
 	sortedInsertLevelList(main_list, *new_calendar_entry);

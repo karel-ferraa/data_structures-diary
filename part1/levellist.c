@@ -82,7 +82,7 @@ At level 0, we chain all the cells*/
 level_cell*  getElementPtrLevelList(level_list l,calendarEntry ce){
     	level_cell* n = l.head[0];
 	while (n != NULL) {
-		if (getIdentifier(*(n->val)) == getIdentifier(ce)) {
+		if (strcmp(getIdentifier(*(n->val)), getIdentifier(ce)) == 0) {
 			return n;
 		} else {
 			n = n->next[0];
