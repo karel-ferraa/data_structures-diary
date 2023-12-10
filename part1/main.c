@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <stdio_ext.h>
 #include <assert.h>
 
 int verifyDate(int day, int month, int year){
@@ -92,22 +91,33 @@ int menu() {
 	return choice;
 }
 
-void searchContact() {
-	printf("Search is not yet implemented\n");
+void searchContact(level_list* main_list) {
+	char surname[100];
+	char firstName[100];
+	printf("Enter the contact's surname\n");
+	scanf("%s",&surname);
+	printf("Enter the contact's firstname\n");
+	scanf("%s",&firstName);
+	contact* contact_to_search = createContact(surname, firstName);
+	calendarEntry* ce_to_search = createCalendarEntry(*contact_to_search);
+	level_cell* contact_cell = getElementPtrLevelList(*main_list, *ce_to_search);
+	if (contact_cell != NULL) {
+		printContact(&(contact_cell->val->c));
+	} else {
+		printf("The entered contact does not exist\n");
+	}
 	return;
 }
 
 void viewContactAppointments(level_list* main_list) {
-	__fpurge(stdin);
 	char surname[100];
 	char firstName[100];
 	printf("Enter the contact's surname\n");
-	fgets(surname, 100, stdin);
+	scanf("%s",&surname);
 	printf("Enter the contact's firstname\n");
-	fgets(firstName, 100, stdin);
+	scanf("%s",&firstName);
 	contact* contact_to_search = createContact(surname, firstName);
 	calendarEntry* ce_to_search = createCalendarEntry(*contact_to_search);
-	// right now the getElementPtr is O(n) complexity which is bad.
 	level_cell* contact_cell = getElementPtrLevelList(*main_list, *ce_to_search);
 	if (contact_cell != NULL) {
 		assert(contact_cell->val->appointments != NULL);
@@ -123,36 +133,33 @@ void viewContactAppointments(level_list* main_list) {
 }
 
 void addNewContact(level_list* main_list) {
-	__fpurge(stdin);
 	char surname[100];
 	char firstName[100];
 	printf("Enter the contact's surname\n");
-	fgets(surname, 100, stdin);
+	scanf("%s",&surname);
 	printf("Enter the contact's firstname\n");
-	fgets(firstName, 100, stdin);
+	scanf("%s",&firstName);
 	contact* new_contact = createContact(surname, firstName);
 	// fgets adds a \n at the end of the buffer, which makes the verifyContact fail. We could use scanf instead of fgets, but that means we are assuming that people's names don't contain spaces in them which is bad. Actually, [you shouldn't assume anything about people's names](https://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/)
-	//if (verifyContact(*new_contact) != 1) {
-	//printf("Error: Contact surname and Firstname must contain only alphabetic characters and be non-empty, aborting\n");
-	//} else {
-	calendarEntry* new_calendar_entry = createCalendarEntry(*new_contact);
-	sortedInsertLevelList(main_list, *new_calendar_entry);
-	printf("New contact added\n");
-	//}
+	if (verifyContact(*new_contact) != 1) {
+	    printf("Error: Contact surname and Firstname must contain only alphabetic characters and be non-empty, aborting\n");
+	} else {
+		calendarEntry* new_calendar_entry = createCalendarEntry(*new_contact);
+		sortedInsertLevelList(main_list, *new_calendar_entry);
+		printf("New contact added\n");
+	}
 	return;
 }
 
 void addNewAppointment(level_list* main_list) {
-	__fpurge(stdin);
 	char surname[100];
 	char firstName[100];
 	printf("Enter the contact's surname\n");
-	fgets(surname, 100, stdin);
+	scanf("%s",&surname);
 	printf("Enter the contact's firstname\n");
-	fgets(firstName, 100, stdin);
+	scanf("%s",&firstName);
 	contact* contact_to_search = createContact(surname, firstName);
 	calendarEntry* ce_to_search = createCalendarEntry(*contact_to_search);
-	// right now the getElementPtr is O(n) complexity which is bad.
 	level_cell* contact_cell = getElementPtrLevelList(*main_list, *ce_to_search);
 	if (contact_cell != NULL) {
 		int year;
@@ -204,7 +211,7 @@ int main() {
 		switch (choice) {
 			case '1':
 			{
-				searchContact();
+				searchContact(main_list);
 				break;
 			}
 			case '2':

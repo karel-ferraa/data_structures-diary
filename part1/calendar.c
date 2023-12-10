@@ -27,6 +27,8 @@ char* getIdentifier(calendarEntry ce) {
     for (int i = 0; i < strlen(ce.c.firstName); i++) {
         id[i + strlen(ce.c.surname) + 1] = tolower(ce.c.firstName[i]);
     }
+    //Add null terminator
+    id[strlen(ce.c.surname) + strlen(ce.c.firstName) + 1] = '\0';
     return id;
 }
 
