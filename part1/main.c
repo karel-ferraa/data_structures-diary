@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <unistd.h>
+#include <stdio_ext.h>
 
 int verifyDate(int day, int month, int year){
 	if (year < 0){
@@ -92,17 +92,18 @@ int menu() {
 }
 
 void searchContact() {
-	printf("Search is not yet implemented");
+	printf("Search is not yet implemented\n");
 	return;
 }
 
 void viewContactAppointments(level_list* main_list) {
+	__fpurge(stdin);
 	char surname[100];
 	char firstName[100];
 	printf("Enter the contact's surname\n");
-	fgets(surname, 100, STDIN_FILENO);
+	fgets(surname, 100, stdin);
 	printf("Enter the contact's firstname\n");
-	fgets(firstName, 100, STDIN_FILENO);
+	fgets(firstName, 100, stdin);
 	contact* contact_to_search = createContact(surname, firstName);
 	calendarEntry* ce_to_search = createCalendarEntry(*contact_to_search);
 	// right now the getElementPtr is O(n) complexity which is bad.
@@ -114,36 +115,39 @@ void viewContactAppointments(level_list* main_list) {
 			curr_cell = curr_cell->next;
 		}
 	} else {
-		printf("The entered contact does not exist");
+		printf("The entered contact does not exist\n");
 	}
 	return;
 }
 
 void addNewContact(level_list* main_list) {
+	__fpurge(stdin);
 	char surname[100];
 	char firstName[100];
 	printf("Enter the contact's surname\n");
-	fgets(surname, 100, STDIN_FILENO);
+	fgets(surname, 100, stdin);
 	printf("Enter the contact's firstname\n");
-	fgets(firstName, 100, STDIN_FILENO);
+	fgets(firstName, 100, stdin);
 	contact* new_contact = createContact(surname, firstName);
-	if (verifyContact(*new_contact) != 1) {
-		printf("Error: Contact surname and Firstname must be contain only alphabetic characters and be non-empty, aborting\n");
-	} else {
-		calendarEntry* new_calendar_entry = createCalendarEntry(*new_contact);
-		sortedInsertLevelList(main_list, *new_calendar_entry);
-		printf("New contact added\n");
-	}
+	// fgets adds a \n at the end of the buffer, which makes the verifyContact fail. We could use scanf instead of fgets, but that means we are assuming that people's names don't contain spaces in them which is bad. Actually, [you shouldn't assume anything about people's names](https://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/)
+	//if (verifyContact(*new_contact) != 1) {
+	//printf("Error: Contact surname and Firstname must be contain only alphabetic characters and be non-empty, aborting\n");
+	//} else {
+	calendarEntry* new_calendar_entry = createCalendarEntry(*new_contact);
+	sortedInsertLevelList(main_list, *new_calendar_entry);
+	printf("New contact added\n");
+	//}
 	return;
 }
 
 void addNewAppointment(level_list* main_list) {
+	__fpurge(stdin);
 	char surname[100];
 	char firstName[100];
 	printf("Enter the contact's surname\n");
-	fgets(surname, 100, STDIN_FILENO);
+	fgets(surname, 100, stdin);
 	printf("Enter the contact's firstname\n");
-	fgets(firstName, 100, STDIN_FILENO);
+	fgets(firstName, 100, stdin);
 	contact* contact_to_search = createContact(surname, firstName);
 	calendarEntry* ce_to_search = createCalendarEntry(*contact_to_search);
 	// right now the getElementPtr is O(n) complexity which is bad.
@@ -161,7 +165,7 @@ void addNewAppointment(level_list* main_list) {
 			printf("Enter the year, month, day, hour and minute of the appointment under the form: year-month-day:hour:minute");
 			scanf("%d-%d-%d:%d:%d", &year, &month, &day, &hour, &minute);
 			printf("Enter the purpose of the appointment (max 200 characters)");
-			fgets(purpose, 200, STDIN_FILENO);
+			fgets(purpose, 200, stdin);
 			new_appointment = createAppointment(day, month, year, hour, minute, purpose);
 		} while (!verifyAppointment(*new_appointment));
 		insertElement(contact_cell->val->appointments, *new_appointment);
@@ -199,30 +203,37 @@ int main() {
 			case '1':
 			{
 				searchContact();
+				break;
 			}
 			case '2':
 			{
 				viewContactAppointments(main_list);
+				break;
 			}
 			case '3':
 			{
 				addNewContact(main_list);
+				break;
 			}
 			case '4':
 			{
 				addNewAppointment(main_list);
+				break;
 			}
 			case '5':
 			{
 				deleteAppointment();
+				break;
 			}
 			case '6':
 			{
 				saveAppointmentFile();
+				break;
 			}
 			case '7':
 			{
 				loadAppointmentFile();
+				break;
 			}
 		}
 	} while (choice != '0');
