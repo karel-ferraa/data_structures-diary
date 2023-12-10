@@ -184,8 +184,30 @@ void addNewAppointment(level_list* main_list) {
 	return;
 }
 
-void deleteAppointment() {
-	printf("Deleting an appointment is not yet implemented");
+void deleteAppointment(level_list* main_list) {
+	__fpurge(stdin);
+	char surname[100];
+	char firstName[100];
+	printf("Enter the contact's surname\n");
+	fgets(surname, 100, stdin);
+	printf("Enter the contact's firstname\n");
+	fgets(firstName, 100, stdin);
+	contact* contact_to_search = createContact(surname, firstName);
+	calendarEntry* ce_to_search = createCalendarEntry(*contact_to_search);
+	// right now the getElementPtr is O(n) complexity which is bad.
+	level_cell* contact_cell = getElementPtrLevelList(*main_list, *ce_to_search);
+	if (contact_cell != NULL) {
+		int index; 
+		do
+		{
+			printf("Enter the number of the appointment you want to delete\n");
+			__fpurge(stdin);
+			scanf("%d", &index);
+		} while (index < 0 || index > listLength(*(contact_cell->val->appointments))); //index should start at one, otherwise put >=
+		removeAtPos(contact_cell->val->appointments, index);
+	} else {
+		printf("The entered contact does not exist");
+	}
 	return;
 }
 
@@ -231,7 +253,7 @@ int main() {
 			}
 			case '5':
 			{
-				deleteAppointment();
+				deleteAppointment(main_list);
 				break;
 			}
 			case '6':
