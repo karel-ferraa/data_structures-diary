@@ -38,7 +38,7 @@ void freeCalendarEntry(calendarEntry* ce) {
 
 
 void addAppointment(calendarEntry* ce, appointment* a){
-    addElement(ce->appointments, a);
+    insertElement(ce->appointments, *a);
 }
 
 void removeAppointment(calendarEntry* ce, appointment* a){

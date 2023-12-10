@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
 
 int verifyDate(int day, int month, int year){
 	if (year < 0){
@@ -76,7 +77,7 @@ int menu() {
 	// 48 and 55 are ascii values for 0 and 7
 	while (choice < 48 || choice > 55) {
 		printf("Select the action to perform by typing in the corresponding number\n");
-		printf("0. Quit the program");
+		printf("0. Quit the program\n");
 		printf("1. Search for a contact\n");
 		printf("2. View a contact's appointments\n");
 		printf("3. Create a contact\n");
@@ -95,20 +96,20 @@ void searchContact() {
 	return;
 }
 
-void viewContactAppointments() {
+void viewContactAppointments(level_list* main_list) {
 	char surname[100];
 	char firstName[100];
 	printf("Enter the contact's surname\n");
-	gets(surname);
+	fgets(surname, 100, STDIN_FILENO);
 	printf("Enter the contact's firstname\n");
-	gets(firstName);
+	fgets(firstName, 100, STDIN_FILENO);
 	contact* contact_to_search = createContact(surname, firstName);
-	calendarEntry* ce_to_search = createCalendarEntry(new_contact);
+	calendarEntry* ce_to_search = createCalendarEntry(*contact_to_search);
 	// right now the getElementPtr is O(n) complexity which is bad.
-	level_cell* contact_cell = getElementPtrLevelList(main_list, ce_to_search);
+	level_cell* contact_cell = getElementPtrLevelList(*main_list, *ce_to_search);
 	if (contact_cell != NULL) {
-		cell* curr_cell = contact_cell->val->appointments.head;
-		while (appointment != NULL) {
+		cell* curr_cell = contact_cell->val->appointments->head;
+		while (curr_cell != NULL) {
 			printAppointment(curr_cell->val);
 			curr_cell = curr_cell->next;
 		}
@@ -118,35 +119,35 @@ void viewContactAppointments() {
 	return;
 }
 
-void createContact() {
+void addNewContact(level_list* main_list) {
 	char surname[100];
 	char firstName[100];
 	printf("Enter the contact's surname\n");
-	gets(surname);
+	fgets(surname, 100, STDIN_FILENO);
 	printf("Enter the contact's firstname\n");
-	gets(firstName);
+	fgets(firstName, 100, STDIN_FILENO);
 	contact* new_contact = createContact(surname, firstName);
-	if (verifyContact(new_contact) != 1) {
+	if (verifyContact(*new_contact) != 1) {
 		printf("Error: Contact surname and Firstname must be contain only alphabetic characters and be non-empty, aborting\n");
 	} else {
-		calendarEntry* new_calendar_entry = createCalendarEntry(new_contact);
-		void sortedInsertLevelList(main_list, new_calendar_entry);
+		calendarEntry* new_calendar_entry = createCalendarEntry(*new_contact);
+		sortedInsertLevelList(main_list, *new_calendar_entry);
 		printf("New contact added\n");
 	}
 	return;
 }
 
-void createAppointment() {
+void addNewAppointment(level_list* main_list) {
 	char surname[100];
 	char firstName[100];
 	printf("Enter the contact's surname\n");
-	gets(surname);
+	fgets(surname, 100, STDIN_FILENO);
 	printf("Enter the contact's firstname\n");
-	gets(firstName);
+	fgets(firstName, 100, STDIN_FILENO);
 	contact* contact_to_search = createContact(surname, firstName);
-	calendarEntry* ce_to_search = createCalendarEntry(new_contact);
+	calendarEntry* ce_to_search = createCalendarEntry(*contact_to_search);
 	// right now the getElementPtr is O(n) complexity which is bad.
-	level_cell* contact_cell = getElementPtrLevelList(main_list, ce_to_search);
+	level_cell* contact_cell = getElementPtrLevelList(*main_list, *ce_to_search);
 	if (contact_cell != NULL) {
 		int year;
 		int month;
@@ -154,15 +155,16 @@ void createAppointment() {
 		int hour;
 		int minute;
 		char purpose[200];
+		appointment* new_appointment;
 		do
 		{
 			printf("Enter the year, month, day, hour and minute of the appointment under the form: year-month-day:hour:minute");
 			scanf("%d-%d-%d:%d:%d", &year, &month, &day, &hour, &minute);
 			printf("Enter the purpose of the appointment (max 200 characters)");
-			gets(purpose);
-			appointment* new_appointment = createAppointment(day, month, year, hour, minute, purpose);
-		} while (!verifyAppointment(new_appointment));
-		insertElement(contact_cell->val.appointments, new_appointment);
+			fgets(purpose, 200, STDIN_FILENO);
+			new_appointment = createAppointment(day, month, year, hour, minute, purpose);
+		} while (!verifyAppointment(*new_appointment));
+		insertElement(contact_cell->val->appointments, *new_appointment);
 	} else {
 		printf("The entered contact does not exist");
 	}
@@ -187,10 +189,11 @@ void loadAppointmentFile() {
 int main() {
 	level_list* main_list = createLevelList(4);
 	// load all the contacts from the contact file
-	pass;
+	// not yet implemented
 
 	int choice;
-	while (choice != '0') {
+	do
+	{
 		choice = menu();
 		switch (choice) {
 			case '1':
@@ -199,15 +202,15 @@ int main() {
 			}
 			case '2':
 			{
-				viewContactAppointments();
+				viewContactAppointments(main_list);
 			}
 			case '3':
 			{
-				createContact();
+				addNewContact(main_list);
 			}
 			case '4':
 			{
-				createAppointment();
+				addNewAppointment(main_list);
 			}
 			case '5':
 			{
@@ -222,5 +225,6 @@ int main() {
 				loadAppointmentFile();
 			}
 		}
-	}
+	} while (choice != '0');
+	freeLevelList(main_list);
 }

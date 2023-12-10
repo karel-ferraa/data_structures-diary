@@ -119,14 +119,17 @@ level_list* createLevelList(int maxlevel) {
 // Free a level_list
 void freeLevelList(level_list *l) {
     level_cell *n = l->head[0];
-    level_cell *to_free = NULL;
-    while (n->next[0] != NULL){
-        to_free = n;
-        n = n->next[0];
-        freeLevelCell(to_free);
+
+    if (n != NULL) {
+    	level_cell *to_free = NULL;
+    	while (n->next[0] != NULL){
+    	    to_free = n;
+    	    n = n->next[0];
+    	    freeLevelCell(to_free);
+    	}
+    	freeLevelCell(n);
+    	free(l);
     }
-    freeLevelCell(n);
-    free(l);
 }
 
 // Add a new element to the level_list
