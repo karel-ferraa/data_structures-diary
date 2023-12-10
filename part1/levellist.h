@@ -1,5 +1,5 @@
-#ifndef LIST_H
-#define LIST_H
+#ifndef LEVELLIST_H
+#define LEVELLIST_H
 
 #include "calendar.h"
 
@@ -40,5 +40,7 @@ void removeElementLevelList(level_list* l, calendarEntry ce);
 void removeAtPosLevelList(level_list* l, int index);
 
 int getElementIndexLevelList(level_list l, calendarEntry ce);
+
+level_cell* getElementPtrLevelList(level_list l, calendarEntry ce);
 
 #endif

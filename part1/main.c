@@ -90,38 +90,136 @@ int menu() {
 	return choice;
 }
 
+void searchContact() {
+	printf("Search is not yet implemented");
+	return;
+}
+
+void viewContactAppointments() {
+	char surname[100];
+	char firstName[100];
+	printf("Enter the contact's surname\n");
+	gets(surname);
+	printf("Enter the contact's firstname\n");
+	gets(firstName);
+	contact* contact_to_search = createContact(surname, firstName);
+	calendarEntry* ce_to_search = createCalendarEntry(new_contact);
+	// right now the getElementPtr is O(n) complexity which is bad.
+	level_cell* contact_cell = getElementPtrLevelList(main_list, ce_to_search);
+	if (contact_cell != NULL) {
+		cell* curr_cell = contact_cell->val->appointments.head;
+		while (appointment != NULL) {
+			printAppointment(curr_cell->val);
+			curr_cell = curr_cell->next;
+		}
+	} else {
+		printf("The entered contact does not exist");
+	}
+	return;
+}
+
+void createContact() {
+	char surname[100];
+	char firstName[100];
+	printf("Enter the contact's surname\n");
+	gets(surname);
+	printf("Enter the contact's firstname\n");
+	gets(firstName);
+	contact* new_contact = createContact(surname, firstName);
+	if (verifyContact(new_contact) != 1) {
+		printf("Error: Contact surname and Firstname must be contain only alphabetic characters and be non-empty, aborting\n");
+	} else {
+		calendarEntry* new_calendar_entry = createCalendarEntry(new_contact);
+		void sortedInsertLevelList(main_list, new_calendar_entry);
+		printf("New contact added\n");
+	}
+	return;
+}
+
+void createAppointment() {
+	char surname[100];
+	char firstName[100];
+	printf("Enter the contact's surname\n");
+	gets(surname);
+	printf("Enter the contact's firstname\n");
+	gets(firstName);
+	contact* contact_to_search = createContact(surname, firstName);
+	calendarEntry* ce_to_search = createCalendarEntry(new_contact);
+	// right now the getElementPtr is O(n) complexity which is bad.
+	level_cell* contact_cell = getElementPtrLevelList(main_list, ce_to_search);
+	if (contact_cell != NULL) {
+		int year;
+		int month;
+		int day;
+		int hour;
+		int minute;
+		char purpose[200];
+		do
+		{
+			printf("Enter the year, month, day, hour and minute of the appointment under the form: year-month-day:hour:minute");
+			scanf("%d-%d-%d:%d:%d", &year, &month, &day, &hour, &minute);
+			printf("Enter the purpose of the appointment (max 200 characters)");
+			gets(purpose);
+			appointment* new_appointment = createAppointment(day, month, year, hour, minute, purpose);
+		} while (!verifyAppointment(new_appointment));
+		insertElement(contact_cell->val.appointments, new_appointment);
+	} else {
+		printf("The entered contact does not exist");
+	}
+	return;
+}
+
+void deleteAppointment() {
+	printf("Deleting an appointment is not yet implemented");
+	return;
+}
+
+void saveAppointmentFile() {
+	printf("Saving the file of all appointments is not yet implemented");
+	return;
+}
+
+void loadAppointmentFile() {
+	printf("Loading the file of all appointments is not yet implemented");
+	return;
+}
+
 int main() {
+	level_list* main_list = createLevelList(4);
+	// load all the contacts from the contact file
+	pass;
+
 	int choice;
 	while (choice != '0') {
 		choice = menu();
 		switch (choice) {
 			case '1':
 			{
-					printf("Search is not yet implemented");
+				searchContact();
 			}
 			case '2':
 			{
-					printf("Viewing a contact's appointments is not yet implemented");
+				viewContactAppointments();
 			}
 			case '3':
 			{
-					printf("Creating a contact is not yet implemented");
+				createContact();
 			}
 			case '4':
 			{
-					printf("Creating a appointment for a contact is not yet implemented");
+				createAppointment();
 			}
 			case '5':
 			{
-					printf("Deleting an appointment is not yet implemented");
+				deleteAppointment();
 			}
 			case '6':
 			{
-					printf("Saving the file of all appointments is not yet implemented");
+				saveAppointmentFile();
 			}
 			case '7':
 			{
-					printf("Loading the file of all appointments is not yet implemented");
+				loadAppointmentFile();
 			}
 		}
 	}

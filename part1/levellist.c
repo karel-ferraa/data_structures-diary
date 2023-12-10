@@ -79,6 +79,30 @@ At level 0, we chain all the cells*/
     return i;
 }
 
+level_cell*  getElementPtrLevelList(level_list l,calendarEntry ce){
+    if (isLevelListEmpty(l)) {
+        return NULL;
+    }
+
+    /*We will use a 4-level list
+Level constitution: the levels correspond to the successive letters in the name strings.
+At the highest level (3), chaining is performed on the first letter of the string (two cells are linked if
+the first letter of their string is different).
+At level 2, chaining is performed if the first letter of the cell strings is the same but the second letter
+is different.
+At level 1, chaining is performed if the first two letters of the cell strings are the same but the third
+letter is different.
+At level 0, we chain all the cells*/
+    level_cell* n = l.head[0];
+    while (getIdentifier(*(n->val)) != getIdentifier(ce)){
+        n = n->next[0];
+        if (n == NULL){
+            return NULL;
+        }
+    }
+    return n;
+}
+
 // Create a new level_list
 level_list* createLevelList(int maxlevel) {
     level_list *l = malloc(sizeof(level_list));
